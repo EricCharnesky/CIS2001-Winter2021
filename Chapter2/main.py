@@ -13,8 +13,6 @@ def juggle(ball1, ball2, ball3):
     ball1.catch()
 
 
-
-
 basketball = Ball("Basketball")
 basketball.toss()
 baseball = Ball("Baseball")

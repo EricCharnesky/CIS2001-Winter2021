@@ -2,6 +2,9 @@ from unittest import TestCase
 from ball import Ball
 
 class TestBall(TestCase):
+    def test_hi_there(self):
+        self.fail()
+
     def test_toss(self):
         # Arrange, Act, Assert
 
