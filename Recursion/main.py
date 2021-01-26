@@ -30,4 +30,4 @@ def better_fib(nth):
 
 
 for n in range(40):
-    print(better_fib(n))
+    print(n, ":", better_fib(n))
