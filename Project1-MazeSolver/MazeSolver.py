@@ -8,6 +8,7 @@ class MazeSolver:
         self._solution_step_counts = []
         self._current_row, self._current_column = self._find_start()
         self._current_steps = 0
+        self._shortest_path = 1000000
 
     def _find_start(self):
         for row_index in range(len(self._maze)):
@@ -26,7 +27,13 @@ class MazeSolver:
 
         if self._maze[self._current_row][self._current_column] == 'E':
             #print(self)
+
+            # add step count to the list to find the min later
             self._solution_step_counts.append(self._current_steps)
+
+            # or track this way
+            if self._current_steps < self._shortest_path:
+                self._shortest_path = self._current_steps
 
         else:
 
