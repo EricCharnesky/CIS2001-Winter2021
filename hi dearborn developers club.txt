@@ -1,2 +1,3 @@
 Happy Friday!
+Hi there from GitHub.com
 Let's learn about Git!
