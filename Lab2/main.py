@@ -1,6 +1,5 @@
 from matplotlib import pyplot as plt
 
-import sys
 import time
 
 
@@ -49,6 +48,7 @@ for n in range(100_000):
     timings.append(compute_time_to_insert_at_index(some_list, n))
 
 plt.plot(length_of_list, timings)
+plt.plot(list(range(1000)), list(range(1000)))
 plt.show()
 
 #plt.plot(size_of_list, timings)
