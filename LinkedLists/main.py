@@ -1,6 +1,21 @@
 
 class DoublyLinkedList:
 
+    class Position:
+
+        def __init__(self, container, node):
+            self._container = container
+            self._node = node
+
+        def data(self):
+            return self._node.data
+
+        def __eq__(self, other):
+            return type(other) is type(self) and other._node is self._node
+
+        def __ne__(self, other):
+            return not ( self == other )
+
     def __init__(self):
         self._head = self.Node(None)   # Sentinel head/tail
         self._head.next = self._head # always the first node or itself if it's empty
@@ -10,21 +25,65 @@ class DoublyLinkedList:
     def __len__(self):
         return self._number_of_items
 
+    # O(1)
+    def first(self):
+        return self._make_position(self._head.next)
+
+    # O(1)
+    def last(self):
+        return self._make_position(self._head.previous)
+
+    # O(1)
+    def after(self, position):
+        node = self._validate(position)
+        return self._make_position(node.next)
+
+    # O(1)
+    def before(self, position):
+        node = self._validate(position)
+        return self._make_position(node.previous)
+
+    # O(1)
+    def add_after(self, position, data):
+        node = self._validate(position)
+        return self._make_position(self._insert_between(data, previous=node, next=node.next))
+
+    # O(1)
+    def add_before(self, position, data):
+        node = self._validate(position)
+        return self._make_position(self._insert_between(data, previous=node.previous, next=node))
+
+    # O(1)
+    def delete(self, position):
+        node = self._validate(position)
+        return self._remove_node(node)
+
+    # O(1)
+    def replace(self, position, data):
+        node = self._validate(position)
+        original = node.data
+        node.data = data
+        return original
+
     def is_empty(self):
         return self._number_of_items == 0
 
+    # O(1)
     def add_to_front(self, item):
         self._insert_between(item, next=self._head.next, previous=self._head)
 
+    # O(1)
     def add_to_back(self, item):
         self._insert_between(item, next=self._head, previous=self._head.previous)
 
+    # O(1)
     def remove_back(self):
         if self.is_empty():
             raise ValueError("List is empty")
 
         return self._remove_node(self._head.previous)
 
+    # O(1)
     def remove_front(self):
         if self.is_empty():
             raise ValueError("List is empty")
@@ -55,17 +114,11 @@ class DoublyLinkedList:
 
         self._insert_between(item, previous=current_item.previous, next=current_item)
 
-    def __next__(self):
-        if self._current is self._head:
-            raise StopIteration()
-        else:
-            answer = self._current.data
-            self._current = self._current.next
-            return answer
-
     def __iter__(self):
-        self._current = self._head.next
-        return self
+        current = self.first()
+        while current is not None:
+            yield current.data()
+            current = self.after(current)
 
     def _insert_between(self, item, previous, next):
         new_node = self.Node(item, next=next, previous=previous)
@@ -74,6 +127,8 @@ class DoublyLinkedList:
 
         self._number_of_items += 1
 
+        return new_node
+
     def _remove_node(self, current_item):
         data = current_item.data
         current_item.data = None
@@ -81,6 +136,20 @@ class DoublyLinkedList:
         current_item.next.previous = current_item.previous
         self._number_of_items -= 1
         return data
+
+    def _validate(self, position):
+        if not isinstance(position, self.Position):
+            raise TypeError()
+        if position._container is not self:
+            raise ValueError()
+        if position._node.next is None:
+            raise ValueError
+        return position._node
+
+    def _make_position(self, node):
+        if node is self._head:
+            return None
+        return self.Position(self, node)
 
     class Node:
 
@@ -283,5 +352,14 @@ doublyLinkedList = DoublyLinkedList()
 for n in range(10):
     doublyLinkedList.add_to_back(n)
 
+# using the iterator
 for item in doublyLinkedList:
     print(item)
+
+
+# our iteration using position
+current_position = doublyLinkedList.first()
+
+while current_position is not None:
+    print(current_position.data())
+    current_position = doublyLinkedList.after(current_position)
