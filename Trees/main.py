@@ -1,14 +1,81 @@
 class NTree:
 
+    class Position:
+
+        def __init__(self, container, tree):
+            self._container = container
+            self._tree = tree
+
+        def data(self):
+            return self._tree.value
+
+        def __eq__(self, other):
+            return type(other) is type(self) and other._tree is self._tree
+
+        def __ne__(self, other):
+            return not (self == other)
+
+    def _validate(self, position):
+        if not isinstance(position, self.Position):
+            raise TypeError()
+        if position._container is not self.root()._tree:
+            raise ValueError()
+
+        return position._tree
+
     def __init__(self, value, parent=None):
         self.value = value
-        self.children = []
+        self._children = []
         self.parent = parent
+
+    def root(self):
+        if self.is_empty():
+            return None
+
+        current = self
+
+        while current.parent is not None:
+            current = current.parent
+
+        return self.Position(current, current)
+
+    def is_root(self, position):
+        return position == self.root()
+
+    def parent(self, position):
+        current_tree = self._validate(position)
+        return self.Position( self.root()._tree, current_tree.parent )
+
+    def is_leaf(self, position):
+        current_tree = self._validate(position)
+        return current_tree.is_leaf()
+
+    def is_empty(self):
+        return self.value is None and len(self._children) == 0
 
     def add_child(self, value):
         child = NTree(value, self)
-        self.children.append(child)
+        self._children.append(child)
         return child
+
+    def number_of_children(self, position):
+        current_tree = self._validate(position)
+        return len(current_tree._children)
+
+    def children(self, position):
+        current_tree = self._validate(position)
+        for child in current_tree._children:
+            yield self.Position(self.root()._tree, child)
+
+    def positions(self):
+        for subtree in self._subtree_preorder(self.root()):
+            yield subtree
+
+    def _subtree_preorder(self, position):
+        yield position
+        for child in self.children(position):
+            for sub_tree in self._subtree_preorder(child):
+                yield sub_tree
 
     def __str__(self):
         return self.value
@@ -24,10 +91,10 @@ class NTree:
     def height(self):
         if self.is_leaf():
             return self.depth()
-        return max(child.height() for child in self.children)
+        return max(child.height() for child in self._children)
 
     def is_leaf(self):
-        return len(self.children) == 0
+        return len(self._children) == 0
 
 
 root = NTree('CIS2001-Winter2021')
@@ -43,3 +110,15 @@ project1.add_child('unit_test.py')
 root.add_child('hello_world.py')
 
 print( root.height() )
+
+
+root_position = root.root()
+
+print(root.number_of_children(root_position))
+
+for child in root.children(root_position):
+    print(child.data())
+
+
+for position in root.positions():
+    print(position.data())
