@@ -96,6 +96,15 @@ class NTree:
     def is_leaf(self):
         return len(self._children) == 0
 
+    def breadthfirst(self):
+        # this is a bad queue but it's ok for now
+        queue = [self.root()]
+        while len(queue) != 0:
+            current_position = queue.pop(0) # bad implementation of dequeue
+            yield current_position
+            for child in self.children(current_position):
+                queue.append(child)
+
 
 root = NTree('CIS2001-Winter2021')
 print("root.depth(): " + str(root.depth()))
@@ -109,16 +118,20 @@ project1.add_child('main.py')
 project1.add_child('unit_test.py')
 root.add_child('hello_world.py')
 
-print( root.height() )
+#print( root.height() )
 
 
 root_position = root.root()
 
-print(root.number_of_children(root_position))
+#print(root.number_of_children(root_position))
 
-for child in root.children(root_position):
-    print(child.data())
+#for child in root.children(root_position):
+    #print(child.data())
 
 
-for position in root.positions():
+#for position in root.positions():
+    #print(position.data())
+
+print(' bread first traversal - level by level')
+for position in root.breadthfirst():
     print(position.data())
