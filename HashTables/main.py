@@ -9,7 +9,9 @@ class Student:
         self._score = score
 
     def __hash__(self):
-        return hash(self._name) + hash(self._score)
+        # only want to hash immutable properties
+        # reduce collisions - the goal is a uniform distribution
+        return hash(self._name)
        # return 0 # don't try this at home, I'm a professional
 
     def __eq__(self, other):
