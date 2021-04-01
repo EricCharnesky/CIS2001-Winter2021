@@ -10,10 +10,10 @@ class HashMap:
     def __init__(self):
         self._data = [None] * 10
         self._number_of_items = 0
-        self._max_fill = .75
+        self._load_factor = .75
 
     def _check_for_resize(self):
-        if self._number_of_items / len(self._data) > self._max_fill:
+        if self._number_of_items / len(self._data) > self._load_factor:
             old_data = self._data
 
             # should do something with prime values for better distribution, but we aren't
@@ -25,7 +25,7 @@ class HashMap:
                     self.add_item(current_node.key, current_node.value)
                     current_node = current_node.next
 
-    def add_item(self, key, value=None):
+    def __setitem__(self, key, value=None):
         self._number_of_items += 1
 
         self._check_for_resize()
@@ -47,7 +47,7 @@ class HashMap:
                         current_node = current_node.next
                 current_node.next = self.Node(key, value)
 
-    def get_item(self, key):
+    def __getitem__(self, key):
         item_hash = hash(key)
         item_index = item_hash % len(self._data)
         if self._data[item_index] is None:
@@ -59,7 +59,7 @@ class HashMap:
             current_node = current_node.next
         raise KeyError
 
-    def delete_item(self, key):
+    def __delitem__(self, key):
         item_hash = hash(key)
         item_index = item_hash % len(self._data)
         if self._data[item_index] is None:
