@@ -210,6 +210,23 @@ class BinarySearchTree(BinaryTree):
 
         return node.data
 
+    def find(self, data, current_position=None):
+        if current_position is None:
+            current_position = self.root()
+        if current_position.data() == data:
+            return current_position
+        if data < current_position.data():
+            left = self.left(current_position)
+            if left is None:
+                raise ValueError("not found")
+            else:
+                return self.find(data, left)
+        right = self.right(current_position)
+        if right is None:
+            raise ValueError("not found")
+        return self.find(data, right)
+
+
 
 
 
